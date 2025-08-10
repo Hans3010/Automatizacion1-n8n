@@ -1,0 +1,168 @@
+{
+  "name": "Automatizacion1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e0b426c2-03a2-4e7b-b626-e6243194412f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "81f38b6e-91c4-4c7c-a138-a75fc1432685",
+      "name": "Webhook",
+      "webhookId": "e0b426c2-03a2-4e7b-b626-e6243194412f"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un asistente experto en clasificación de soporte al cliente. Analiza la siguiente solicitud y clasifícala en una de estas tres categorías: 'Ventas', 'Soporte Técnico' o 'Consulta General'. Responde únicamente con la categoría, sin añadir ninguna palabra o explicación adicional. La solicitud es la siguiente: {{ $json.body['Escriba aquí su consulta o pregunta'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f2bd3d8b-05e4-42c9-b238-3f07a70dfe47",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "n8bva9RGlfeJenO1",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18vVAlFQsHwQY3gZBarX0JgKCSRuu5VbvZXiQeO_Y7tk",
+          "mode": "list",
+          "cachedResultName": "DB n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18vVAlFQsHwQY3gZBarX0JgKCSRuu5VbvZXiQeO_Y7tk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18vVAlFQsHwQY3gZBarX0JgKCSRuu5VbvZXiQeO_Y7tk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp:": "={{ $now }}",
+            "Consulta del Cliente:": "={{ $('Webhook').item.json.body['Escriba aquí su consulta o pregunta'] }}",
+            "Clasificacion_IA:": "={{ $json.message.content }}"
+          },
+          "matchingColumns": [
+            "Timestamp:"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp:",
+              "displayName": "Timestamp:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Consulta del Cliente:",
+              "displayName": "Consulta del Cliente:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Clasificacion_IA:",
+              "displayName": "Clasificacion_IA:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        560,
+        0
+      ],
+      "id": "98807da5-ebe5-4a92-9ea8-2643a68dcd31",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WFA0oLby9n9JCSKD",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cbd113c3-4e85-410d-beb5-f142e6555d53",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0eca2267eebf283ed56a91913fc34f6e12e354fb846d63ded8275d2317eee596"
+  },
+  "id": "BtDUTlGBgEUQK5Ts",
+  "tags": []
+}
